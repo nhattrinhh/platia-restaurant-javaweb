@@ -29,7 +29,7 @@ function Sidebar({ collapsed, setCollapsed, onLogout }) {
             <div className="h-16 px-6 flex items-center justify-between border-b border-gray-200">
 
                 {!collapsed && (
-                    <span className="font-bold text-2xl text-indigo-600 tracking-tight">FoodieHub Admin</span>
+                    <span className="font-bold text-2xl text-indigo-600 tracking-tight">Platia Admin</span>
                 )}
                 <button
                     onClick={() => setCollapsed(!collapsed)}

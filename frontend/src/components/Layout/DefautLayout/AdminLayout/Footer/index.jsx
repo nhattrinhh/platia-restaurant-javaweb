@@ -6,8 +6,8 @@ function Footer() {
             className="admin-footer bg-gray-100 border-t h-12 flex items-center justify-center mt-auto text-sm text-gray-500"
         >
             <span>
-                © {new Date().getFullYear()} FoobieHub Admin | Powered by{' '}
-                <span className="text-blue-600 font-semibold">FoodieHub Team</span>
+                © {new Date().getFullYear()} Platia Admin | Powered by{' '}
+                <span className="text-blue-600 font-semibold">Platia Team</span>
             </span>
         </footer>
 

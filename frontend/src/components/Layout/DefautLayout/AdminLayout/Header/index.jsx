@@ -84,11 +84,11 @@ function Header() {
                 <div className="admin-header-left flex items-center gap-2">
                     <img
                         src="/images/logo0.png"
-                        alt="FoodieHub Logo"
+                        alt="Platia Logo"
                         className="h-10 w-10 object-contain"
                     />
                     <span className="text-2xl font-semibold text-indigo-900 tracking-tight">
-                        FoodieHub
+                        Platia
                     </span>
                 </div>
 
