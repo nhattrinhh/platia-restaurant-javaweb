@@ -406,7 +406,7 @@ function BookingHistory() {
                         <FaUtensils className="text-white text-xl" />
                     </div>
                     <h1 className="text-3xl font-bold text-indigo-900">Lịch Sử Đặt Bàn</h1>
-                    <p className="text-gray-600 text-sm mt-2">Theo dõi và quản lý các đơn đặt bàn của bạn tại FoodieHub Restaurant</p>
+                    <p className="text-gray-600 text-sm mt-2">Theo dõi và quản lý các đơn đặt bàn của bạn tại Platia Restaurant</p>
                 </div>
 
                 {/* Error Message */}

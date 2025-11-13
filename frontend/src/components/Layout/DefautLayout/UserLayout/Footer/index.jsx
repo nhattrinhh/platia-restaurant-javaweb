@@ -43,7 +43,7 @@ function Footer() {
                     {/* Logo & Contact Info */}
                     <motion.div custom={0} variants={itemVariants} className="space-y-4">
                         <Link to="/" className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 font-montserrat">
-                            FoodieHub
+                            Platia
                         </Link>
                         <p className="text-gray-600 italic text-sm leading-relaxed">
                             Thưởng thức món ăn ngon, giao hàng tận nơi
@@ -55,7 +55,7 @@ function Footer() {
                             </div>
                             <div className="flex items-center">
                                 <Mail className="w-5 h-5 mr-2 text-orange-600" />
-                                <span>contact@foodiehub.com</span>
+                                <span>contact@platia.com</span>
                             </div>
                             <div className="flex items-center">
                                 <MapPin className="w-5 h-5 mr-2 text-orange-600" />
@@ -163,7 +163,7 @@ function Footer() {
                     variants={itemVariants}
                     className="flex flex-col md:flex-row items-center justify-between text-sm text-gray-600"
                 >
-                    <p className="mb-2 md:mb-0">© {new Date().getFullYear()} FoodieHub. All rights reserved.</p>
+                    <p className="mb-2 md:mb-0">© {new Date().getFullYear()} Platia. All rights reserved.</p>
                     <div className="flex space-x-4">
                         {[
                             { to: '/privacy', label: 'Chính sách bảo mật' },

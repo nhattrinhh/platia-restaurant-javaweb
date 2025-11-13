@@ -60,7 +60,7 @@ function About() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, delay: 0.5 }}
                     >
-                        FoodieHub
+                        Platia
                     </motion.h1>
 
                     <motion.p
@@ -123,10 +123,10 @@ function About() {
                     <motion.div className="max-w-4xl mx-auto" variants={fadeInUp}>
                         <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-2xl border border-orange-100">
                             <p className="text-xl text-gray-700 mb-6 leading-relaxed">
-                                FoodieHub là nền tảng đặt đồ ăn trực tuyến hàng đầu tại Việt Nam, được thành lập vào năm 2020 với mục tiêu mang đến sự tiện lợi và trải nghiệm ẩm thực tuyệt vời cho khách hàng.
+                                Platia là nền tảng đặt đồ ăn trực tuyến hàng đầu tại Việt Nam, được thành lập vào năm 2020 với mục tiêu mang đến sự tiện lợi và trải nghiệm ẩm thực tuyệt vời cho khách hàng.
                             </p>
                             <p className="text-xl text-gray-700 leading-relaxed">
-                                Chúng tôi ra đời từ nhu cầu ngày càng cao về dịch vụ giao đồ ăn nhanh chóng, giúp bạn thưởng thức món ngon từ các nhà hàng yêu thích chỉ với vài cú click. FoodieHub cung cấp dịch vụ đặt món online, giao hàng nhanh trong vòng 30 phút, và hỗ trợ đa dạng các loại hình ẩm thực từ món Việt truyền thống đến món ăn quốc tế.
+                                Chúng tôi ra đời từ nhu cầu ngày càng cao về dịch vụ giao đồ ăn nhanh chóng, giúp bạn thưởng thức món ngon từ các nhà hàng yêu thích chỉ với vài cú click. Platia cung cấp dịch vụ đặt món online, giao hàng nhanh trong vòng 30 phút, và hỗ trợ đa dạng các loại hình ẩm thực từ món Việt truyền thống đến món ăn quốc tế.
                             </p>
                         </div>
                     </motion.div>
@@ -159,7 +159,7 @@ function About() {
                                 Sứ mệnh của chúng tôi là mang đến trải nghiệm ẩm thực chất lượng và tiện lợi cho mọi người, mọi lúc, mọi nơi. Chúng tôi cam kết kết nối khách hàng với những món ăn ngon nhất, đảm bảo sự hài lòng tuyệt đối.
                             </p>
                             <p className="text-xl text-gray-300 leading-relaxed">
-                                Trong tương lai, FoodieHub hướng tới việc trở thành nền tảng đặt đồ ăn số 1 tại Đông Nam Á, mở rộng dịch vụ đến nhiều thành phố hơn và không ngừng cải tiến để phục vụ khách hàng tốt hơn.
+                                Trong tương lai, Platia hướng tới việc trở thành nền tảng đặt đồ ăn số 1 tại Đông Nam Á, mở rộng dịch vụ đến nhiều thành phố hơn và không ngừng cải tiến để phục vụ khách hàng tốt hơn.
                             </p>
                         </div>
                     </motion.div>
@@ -324,7 +324,7 @@ function About() {
                                     </div>
                                     <div>
                                         <p className="font-semibold text-gray-800">Email:</p>
-                                        <p className="text-gray-600">support@foodiehub.vn</p>
+                                        <p className="text-gray-600">support@platia.vn</p>
                                     </div>
                                 </div>
 

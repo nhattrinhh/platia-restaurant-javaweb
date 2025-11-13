@@ -131,7 +131,7 @@ function Header() {
                         to="/"
                         className="text-3xl font-bold text-amber-500 tracking-tight font-montserrat"
                     >
-                        FoodieHub
+                        Platia
                     </Link>
 
                     {/* Toggle button for mobile */}

@@ -276,7 +276,7 @@ function Menu() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.5 }}
                         >
-                            Khám phá những món ăn tuyệt vời được chế biến với tình yêu và sự tận tâm tại FoodieHub
+                            Khám phá những món ăn tuyệt vời được chế biến với tình yêu và sự tận tâm tại Platia
                         </motion.p>
                     </div>
                 </div>
