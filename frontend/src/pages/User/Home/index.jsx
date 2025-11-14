@@ -513,7 +513,7 @@ function Home() {
                         </h2>
                         <div className="max-w-4xl mx-auto">
                             <p className="text-slate-700 text-xl leading-relaxed md-6">
-                                Thưởng thức các món ăn mới nhất và được yêu thích nhất tại FoodieHub. Đặt ngay!
+                                Thưởng thức các món ăn mới nhất và được yêu thích nhất tại Platia. Đặt ngay!
                             </p>
                         </div>
                         <div className="flex justify-center gap-4 mt-3">
@@ -616,7 +616,7 @@ function Home() {
                         >
                             <div className="space-y-6">
                                 <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 font-montserrat tracking-tight">
-                                    Khám phá thế giới với FoodieHub
+                                    Khám phá thế giới với Platia
                                 </h1>
                                 <p className="text-slate-600 text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
                                     Đăng ký ngay để nhận các ưu đãi, lời khuyên ẩm thực và cập nhật mới nhất từ chúng tôi.
@@ -692,7 +692,7 @@ function Home() {
                                 <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-3xl blur-2xl transform rotate-3 scale-105"></div>
                                 <img
                                     src="/images/app-phone.png"
-                                    alt="Ứng dụng FoodieHub"
+                                    alt="Ứng dụng Platia"
                                     className="relative w-80 h-96 md:w-96 md:h-[500px] lg:w-[400px] lg:h-[520px] object-cover rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-500"
                                     loading="lazy"
                                 />

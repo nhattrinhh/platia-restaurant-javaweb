@@ -383,65 +383,70 @@ function NewsManager() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table className="w-full border-collapse">
-                    <thead>
-                        <tr className="bg-indigo-100 text-indigo-900">
-                            <th className="p-4 text-left font-semibold">#</th>
-                            <th className="p-4 text-left font-semibold">Hình ảnh</th>
-                            <th className="p-4 text-left font-semibold">Tiêu đề</th>
-                            <th className="p-4 text-left font-semibold">Mô tả</th>
-                            <th className="p-4 text-left font-semibold">Thời gian</th>
-                            <th className="p-4 text-left font-semibold">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {newsList.length === 0 ? (
-                            <tr>
-                                <td colSpan="6" className="text-center text-gray-500 py-6">
-                                    Không có tin tức phù hợp
-                                </td>
-                            </tr>
-                        ) : (
-                            newsList.map((news, idx) => (
-                                <tr key={news.id} className="hover:bg-gray-50 transition-all duration-200">
-                                    <td className="p-4 border-t border-gray-200">{idx + 1}</td>
-                                    <td className="p-4 border-t border-gray-200">
-                                        <img
-                                            src={news.imageUrl}
-                                            alt={news.title}
-                                            className="w-12 h-12 object-cover rounded cursor-pointer"
-                                            onError={(e) => { e.target.src = '/images/News/placeholder.jpg'; }}
-                                            onClick={() => handleShowImage(news.imageUrl)}
-                                        />
-                                    </td>
-                                    <td className="p-4 border-t border-gray-200">{news.title}</td>
-                                    <td className="p-4 border-t border-gray-200">{news.description?.substring(0, 50) || ''}...</td>
-                                    <td className="p-4 border-t border-gray-200">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden divide-y divide-gray-200">
+                {newsList.length === 0 ? (
+                    <div className="text-center text-gray-500 py-6">
+                        Không có tin tức phù hợp
+                    </div>
+                ) : (
+                    newsList.map((news, idx) => (
+                        <details
+                            key={news.id}
+                            className="group border-b border-gray-200 transition-all duration-200 hover:bg-gray-50"
+                        >
+                            <summary className="flex items-center justify-between p-4 cursor-pointer select-none">
+                                <div className="flex items-center gap-4">
+                                    <span className="font-semibold text-indigo-700">{idx + 1}.</span>
+                                    <img
+                                        src={news.imageUrl}
+                                        alt={news.title}
+                                        className="w-12 h-12 object-cover rounded"
+                                        onError={(e) => { e.target.src = '/images/News/placeholder.jpg'; }}
+                                    />
+                                    <span className="font-semibold text-gray-900">{news.title}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-all duration-200"
+                                        onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', news); }}
+                                        title="Chỉnh sửa"
+                                    >
+                                        <FaEdit />
+                                    </button>
+                                    <button
+                                        className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
+                                        onClick={(e) => { e.stopPropagation(); handleDelete(news.id); }}
+                                        title="Xóa"
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                    <span className="text-gray-500 text-sm">
                                         {new Date(news.timestamp).toLocaleString('vi-VN')}
-                                    </td>
-                                    <td className="p-4 border-t border-gray-200 flex space-x-3">
-                                        <button
-                                            className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-all duration-200"
-                                            onClick={() => handleOpenModal('edit', news)}
-                                            title="Chỉnh sửa"
-                                        >
-                                            <FaEdit />
-                                        </button>
-                                        <button
-                                            className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
-                                            onClick={() => handleDelete(news.id)}
-                                            title="Xóa"
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                                    </span>
+                                </div>
+                            </summary>
+
+                            <div className="px-6 pb-4 text-gray-700">
+                                <p className="mb-2">
+                                    <span className="font-medium">Mô tả:</span>{' '}
+                                    {news.description || 'Không có mô tả.'}
+                                </p>
+                                <div className="flex items-center gap-3">
+                                    <span className="font-medium">Xem hình ảnh:</span>
+                                    <img
+                                        src={news.imageUrl}
+                                        alt={news.title}
+                                        className="w-24 h-24 object-cover rounded cursor-pointer"
+                                        onError={(e) => { e.target.src = '/images/News/placeholder.jpg'; }}
+                                        onClick={() => handleShowImage(news.imageUrl)}
+                                    />
+                                </div>
+                            </div>
+                        </details>
+                    ))
+                )}
             </div>
+
 
             {/* Modal xem ảnh lớn */}
             {showImageModal && (

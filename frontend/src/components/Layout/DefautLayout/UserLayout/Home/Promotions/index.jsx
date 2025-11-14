@@ -265,11 +265,11 @@ const Promotions = () => {
                         <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
                     </div>
                     <h2 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 mb-8 font-montserrat tracking-tight leading-tight">
-                        Khuyến Mãi FoodieHub
+                        Khuyến Mãi Platia
                     </h2>
                     <div className="max-w-4xl mx-auto">
                         <p className="text-slate-700 text-2xl leading-relaxed mb-6">
-                            Khám phá những ưu đãi hấp dẫn từ FoodieHub
+                            Khám phá những ưu đãi hấp dẫn từ Platia
                         </p>
                         <p className="text-slate-500 text-lg leading-relaxed">
                             Đặt ngay để nhận giá tốt nhất và thưởng thức món ăn yêu thích!
