@@ -549,18 +549,18 @@ function ProductManager() {
     );
 
   return (
-    <div className="container mx-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="container mx-auto p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <ToastContainer />
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <h2 className="text-3xl font-extrabold text-indigo-900 tracking-tight">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-indigo-900 tracking-tight">
           Quản lý Thực Đơn
         </h2>
-        <div className="flex gap-4 w-full md:w-auto">
-          <div className="relative w-full md:w-80">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
+          <div className="relative w-full sm:w-64 md:w-80">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             <input
               type="text"
-              className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full pl-10 pr-10 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
               placeholder="Tìm kiếm theo tên món ăn..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -574,7 +574,7 @@ function ProductManager() {
             )}
           </div>
           <button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300"
+            className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300 text-sm sm:text-base whitespace-nowrap"
             onClick={() => handleOpenModal("add")}
           >
             <FaPlus className="mr-2" /> Thêm món ăn
@@ -582,7 +582,7 @@ function ProductManager() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {currentProducts.length === 0 ? (
           <div className="col-span-full text-center text-gray-500 py-6">
             Không có món ăn phù hợp
@@ -596,24 +596,24 @@ function ProductManager() {
               <img
                 src={p.img}
                 alt={p.name}
-                className="w-full h-48 object-cover cursor-pointer"
+                className="w-full h-40 sm:h-48 object-cover cursor-pointer"
                 onError={(e) =>
                   (e.target.src = "/images/Product/placeholder.jpg")
                 }
                 onClick={() => handleShowImage(p.img)}
               />
-              <div className="p-4">
-                <h4 className="text-lg font-semibold text-indigo-800 mb-1">
+              <div className="p-3 sm:p-4">
+                <h4 className="text-base sm:text-lg font-semibold text-indigo-800 mb-1 line-clamp-2">
                   {p.name}
                 </h4>
-                <p className="text-sm text-gray-500 mb-2">
+                <p className="text-xs sm:text-sm text-gray-500 mb-2 truncate">
                   {p.productTypeName || "Không có"}
                 </p>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-400 line-through">
+                <div className="flex justify-between items-center mb-2 flex-wrap gap-1">
+                  <span className="text-xs sm:text-sm text-gray-400 line-through">
                     {p.originalPrice.toLocaleString("vi-VN")}₫
                   </span>
-                  <span className="text-indigo-700 font-bold">
+                  <span className="text-sm sm:text-base text-indigo-700 font-bold">
                     {p.discountedPrice.toLocaleString("vi-VN")}₫
                   </span>
                 </div>
@@ -621,18 +621,20 @@ function ProductManager() {
                   {p.discount}
                 </span>
               </div>
-              <div className="flex justify-end gap-2 p-4 border-t">
+              <div className="flex justify-end gap-2 p-3 sm:p-4 border-t">
                 <button
-                  className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600"
+                  className="p-2 sm:p-2.5 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors"
                   onClick={() => handleOpenModal("edit", p)}
+                  aria-label="Chỉnh sửa"
                 >
-                  <FaEdit />
+                  <FaEdit className="text-sm sm:text-base" />
                 </button>
                 <button
-                  className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  className="p-2 sm:p-2.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                   onClick={() => handleDelete(p.id)}
+                  aria-label="Xóa"
                 >
-                  <FaTrash />
+                  <FaTrash className="text-sm sm:text-base" />
                 </button>
               </div>
             </div>
@@ -640,9 +642,82 @@ function ProductManager() {
         )}
       </div>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row justify-center items-center mt-6 sm:mt-8 gap-3 sm:gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 text-sm sm:text-base ${
+              currentPage === 1
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 text-white hover:bg-indigo-700"
+            }`}
+          >
+            Trước
+          </button>
+
+          <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Hiển thị tối đa 5 số trang trên desktop, ít hơn trên mobile
+              if (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 text-sm sm:text-base ${
+                      currentPage === page
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white text-gray-700 hover:bg-indigo-50 border border-gray-300"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return (
+                  <span
+                    key={page}
+                    className="px-1 sm:px-2 text-gray-500 text-sm sm:text-base"
+                  >
+                    ...
+                  </span>
+                );
+              }
+              return null;
+            })}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 text-sm sm:text-base ${
+              currentPage === totalPages
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 text-white hover:bg-indigo-700"
+            }`}
+          >
+            Sau
+          </button>
+        </div>
+      )}
+
+      {/* Hiển thị thông tin phân trang */}
+      {products.length > 0 && (
+        <div className="text-center mt-3 sm:mt-4 text-gray-600 text-xs sm:text-sm px-2">
+          Hiển thị {indexOfFirstProduct + 1} -{" "}
+          {Math.min(indexOfLastProduct, products.length)} trong tổng số{" "}
+          {products.length} sản phẩm
+        </div>
+      )}
+
       {/* Modal xem ảnh lớn */}
       {showImageModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="relative max-w-4xl w-full">
             <img
               src={imageToShow}
@@ -653,8 +728,9 @@ function ProductManager() {
               }}
             />
             <button
-              className="absolute top-4 right-4 text-white text-2xl font-bold bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 transition-all duration-200"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white text-xl sm:text-2xl font-bold bg-gray-800 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-gray-700 transition-all duration-200"
               onClick={handleCloseImageModal}
+              aria-label="Đóng"
             >
               <FaTimes />
             </button>
@@ -664,24 +740,26 @@ function ProductManager() {
 
       {/* Modal thêm/chỉnh sửa */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 w-full max-w-4xl shadow-2xl backdrop-blur-lg">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 w-full max-w-4xl shadow-2xl backdrop-blur-lg my-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
               {modalType === "add" ? "Thêm sản phẩm" : "Chỉnh sửa sản phẩm"}
             </h3>
             {error && (
-              <div className="text-red-500 mb-4 text-center">{error}</div>
+              <div className="text-red-500 mb-4 text-center text-sm sm:text-base">
+                {error}
+              </div>
             )}
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Tên món ăn *
                   </label>
                   <input
                     type="text"
                     name="name"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.name}
                     onChange={handleChange}
                     required
@@ -689,13 +767,13 @@ function ProductManager() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Giá gốc *
                   </label>
                   <input
                     type="number"
                     name="originalPrice"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.originalPrice}
                     onChange={handleChange}
                     required
@@ -704,13 +782,13 @@ function ProductManager() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Giá khuyến mãi
                   </label>
                   <input
                     type="number"
                     name="discountedPrice"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.discountedPrice}
                     onChange={handleChange}
                     placeholder="Nhập giá khuyến mãi"
@@ -718,12 +796,12 @@ function ProductManager() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Loại món ăn *
                   </label>
                   <select
                     name="productTypeId"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.productTypeId}
                     onChange={handleChange}
                     required
@@ -737,12 +815,12 @@ function ProductManager() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Trạng thái *
                   </label>
                   <select
                     name="status"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.status}
                     onChange={handleChange}
                     required
@@ -753,12 +831,12 @@ function ProductManager() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Danh mục món ăn
                   </label>
                   <select
                     name="categoryId"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.categoryId}
                     onChange={handleChange}
                   >
@@ -771,13 +849,13 @@ function ProductManager() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
                     Hình ảnh
                   </label>
                   <input
                     type="text"
                     name="img"
-                    className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                     value={form.img}
                     onChange={handleChange}
                     placeholder="Nhập tên tệp hoặc URL"
@@ -790,7 +868,7 @@ function ProductManager() {
                           : `${baseImagePath}${form.img}`
                       }
                       alt="Preview"
-                      className="w-20 h-20 object-cover mt-2 rounded"
+                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover mt-2 rounded"
                       onError={(e) => {
                         e.target.src = "/images/Product/placeholder.jpg";
                       }}
@@ -798,30 +876,30 @@ function ProductManager() {
                   )}
                 </div>
               </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700">
+              <div className="mt-3 sm:mt-4">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700">
                   Mô tả
                 </label>
                 <textarea
                   name="description"
-                  className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                   value={form.description}
                   onChange={handleChange}
                   placeholder="Nhập mô tả sản phẩm"
                   rows="4"
                 />
               </div>
-              <div className="flex justify-end mt-6 space-x-3">
+              <div className="flex flex-col sm:flex-row justify-end mt-4 sm:mt-6 gap-2 sm:space-x-3 sm:space-x-0">
                 <button
                   type="button"
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
                   onClick={handleCloseModal}
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200 text-sm sm:text-base order-1 sm:order-2"
                 >
                   {modalType === "add" ? "Thêm mới" : "Lưu thay đổi"}
                 </button>
