@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { FaEye, FaTrash, FaUserPlus } from "react-icons/fa";
+import {
+  FaEye,
+  FaTrash,
+  FaUserPlus,
+  FaSearch,
+  FaTimes,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa";
 import {
   getAllUsers,
   deleteUser,
@@ -11,11 +19,13 @@ import Swal from "sweetalert2";
 
 function UserManager() {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewingUser, setViewingUser] = useState(null);
+  const [expandedRows, setExpandedRows] = useState(new Set());
   const [addingUser, setAddingUser] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
+  const [search, setSearch] = useState("");
   const [addForm, setAddForm] = useState({
     username: "",
     email: "",
@@ -50,13 +60,11 @@ function UserManager() {
 
       try {
         const usersData = await getAllUsers(token);
-        console.log("Users data from API:", usersData); // Debug log
         const enrichedUsers = usersData.map((user) => {
           // Ưu tiên full_name (snake_case) vì đây là tên trường trong database
-          const fullname =
-            user.full_name || user.fullname || user.fullName || "";
+          const fullname = user.fullname || "";
           const address = user.address || "";
-          const phoneNumber = user.phone_number || user.phoneNumber || "";
+          const phoneNumber = user.phoneNumber || "";
 
           return {
             id: user.username,
@@ -71,6 +79,7 @@ function UserManager() {
           };
         });
         setUsers(enrichedUsers);
+        setFilteredUsers(enrichedUsers);
         setError(null);
       } catch (err) {
         setError(err.message || "Không thể tải danh sách người dùng.");
@@ -121,7 +130,9 @@ function UserManager() {
 
     try {
       await deleteUser(token, username);
-      setUsers(users.filter((user) => user.id !== username));
+      const updatedUsers = users.filter((user) => user.id !== username);
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
       toast.success(`Xóa người dùng ${username} thành công!`, {
         position: "top-right",
         autoClose: 3000,
@@ -150,10 +161,64 @@ function UserManager() {
     }
   };
 
-  // Xem chi tiết người dùng
-  const handleView = (user) => {
-    setViewingUser(user);
+  // Toggle expand row
+  const toggleRow = (userId) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(userId)) {
+      newExpanded.delete(userId);
+    } else {
+      newExpanded.add(userId);
+    }
+    setExpandedRows(newExpanded);
   };
+
+  // Tìm kiếm người dùng
+  const handleSearch = () => {
+    if (!search.trim()) {
+      setFilteredUsers(users);
+      setCurrentPage(1);
+      return;
+    }
+
+    const searchLower = search.toLowerCase().trim();
+    const filtered = users.filter(
+      (user) =>
+        user.fullname?.toLowerCase().includes(searchLower) ||
+        user.email?.toLowerCase().includes(searchLower) ||
+        user.username?.toLowerCase().includes(searchLower) ||
+        user.address?.toLowerCase().includes(searchLower) ||
+        user.phoneNumber?.toLowerCase().includes(searchLower)
+    );
+    setFilteredUsers(filtered);
+    setCurrentPage(1);
+  };
+
+  // Xóa bộ lọc tìm kiếm
+  const handleClearFilter = () => {
+    setSearch("");
+    setFilteredUsers(users);
+    setCurrentPage(1);
+  };
+
+  // Filter users when search changes
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredUsers(users);
+      setCurrentPage(1);
+    } else {
+      const searchLower = search.toLowerCase().trim();
+      const filtered = users.filter(
+        (user) =>
+          user.fullname?.toLowerCase().includes(searchLower) ||
+          user.email?.toLowerCase().includes(searchLower) ||
+          user.username?.toLowerCase().includes(searchLower) ||
+          user.address?.toLowerCase().includes(searchLower) ||
+          user.phoneNumber?.toLowerCase().includes(searchLower)
+      );
+      setFilteredUsers(filtered);
+      setCurrentPage(1);
+    }
+  }, [search, users]);
 
   // Bắt đầu thêm người dùng
   const handleAddUser = () => {
@@ -245,7 +310,9 @@ function UserManager() {
         enabled: addForm.enabled,
         roles: ["USER"],
       };
-      setUsers([...users, newUser]);
+      const updatedUsers = [...users, newUser];
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
       setAddingUser(false);
       toast.success(`Thêm người dùng ${response.username} thành công!`, {
         position: "top-right",
@@ -277,8 +344,8 @@ function UserManager() {
   // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(users.length / usersPerPage);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -298,37 +365,186 @@ function UserManager() {
     );
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="container mx-auto p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <ToastContainer />
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
         <h2 className="text-2xl sm:text-3xl font-extrabold text-indigo-900 tracking-tight">
           Quản Lý Người Dùng
         </h2>
-        <button
-          className="flex items-center px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-200 text-sm sm:text-base w-full sm:w-auto justify-center"
-          onClick={handleAddUser}
-        >
-          <FaUserPlus className="mr-2" /> Thêm Người Dùng
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
+          <div className="relative w-full sm:w-64 md:w-80">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm sm:text-base" />
+            <input
+              type="text"
+              className="w-full pl-9 sm:pl-10 pr-9 sm:pr-10 py-2 sm:py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-xs sm:text-sm md:text-base"
+              placeholder="Tìm kiếm theo tên, email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            />
+            {search && (
+              <FaTimes
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer hover:text-red-500 transition-colors text-sm sm:text-base"
+                onClick={handleClearFilter}
+              />
+            )}
+          </div>
+          <button
+            className="flex items-center justify-center px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-200 text-xs sm:text-sm md:text-base whitespace-nowrap w-full sm:w-auto"
+            onClick={handleAddUser}
+          >
+            <FaUserPlus className="mr-1.5 sm:mr-2 text-xs sm:text-sm" />
+            <span className="text-xs sm:text-sm md:text-base">
+              Thêm Người Dùng
+            </span>
+          </button>
+        </div>
       </div>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse min-w-[640px]">
+        {/* Card View for Mobile and Tablet */}
+        <div className="lg:hidden">
+          {currentUsers.length === 0 ? (
+            <div className="text-center text-gray-500 py-8 px-4">
+              {search
+                ? "Không tìm thấy người dùng nào"
+                : "Không có người dùng nào"}
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {currentUsers.map((user, idx) => {
+                const isExpanded = expandedRows.has(user.id);
+                return (
+                  <div
+                    key={user.id}
+                    className="p-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div
+                      className="flex items-start justify-between cursor-pointer"
+                      onClick={() => toggleRow(user.id)}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs text-gray-500">
+                            #{idx + 1 + (currentPage - 1) * usersPerPage}
+                          </span>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${
+                              user.status === "active"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {user.status === "active" ? "Hoạt động" : "Ngừng"}
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-semibold text-gray-900 truncate">
+                          {user.fullname && user.fullname.trim()
+                            ? user.fullname
+                            : "N/A"}
+                        </h3>
+                        <p className="text-xs text-gray-600 truncate mt-1">
+                          {user.email || "N/A"}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 ml-2">
+                        <button
+                          className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(user.id);
+                          }}
+                          title="Xóa"
+                        >
+                          <FaTrash className="text-xs" />
+                        </button>
+                        {isExpanded ? (
+                          <FaChevronUp className="text-indigo-600 text-sm" />
+                        ) : (
+                          <FaChevronDown className="text-indigo-600 text-sm" />
+                        )}
+                      </div>
+                    </div>
+                    {isExpanded && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <h4 className="text-sm font-bold text-gray-900 mb-3">
+                          Chi Tiết Người Dùng
+                        </h4>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Tên Đăng Nhập:
+                            </label>
+                            <p className="text-xs text-gray-900 bg-gray-50 p-2 rounded border border-gray-200 break-words">
+                              {user.username}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Họ và Tên:
+                            </label>
+                            <p className="text-xs text-gray-900 bg-gray-50 p-2 rounded border border-gray-200 break-words">
+                              {user.fullname && user.fullname.trim()
+                                ? user.fullname
+                                : "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Email:
+                            </label>
+                            <p className="text-xs text-gray-900 bg-gray-50 p-2 rounded border border-gray-200 break-all">
+                              {user.email || "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Số Điện Thoại:
+                            </label>
+                            <p className="text-xs text-gray-900 bg-gray-50 p-2 rounded border border-gray-200">
+                              {user.phoneNumber || "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Địa Chỉ:
+                            </label>
+                            <p className="text-xs text-gray-900 bg-gray-50 p-2 rounded border border-gray-200 break-words">
+                              {user.address || "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Vai Trò:
+                            </label>
+                            <p className="text-xs text-gray-900 bg-gray-50 p-2 rounded border border-gray-200">
+                              {user.roles?.join(", ") || "USER"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Table View for Desktop */}
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="w-full border-collapse">
             <thead>
               <tr className="bg-indigo-100 text-indigo-900">
-                <th className="p-3 sm:p-4 text-left font-semibold text-xs sm:text-sm">
-                  #
-                </th>
-                <th className="p-3 sm:p-4 text-left font-semibold text-xs sm:text-sm">
+                <th className="p-4 text-left font-semibold text-sm w-12"></th>
+                <th className="p-4 text-left font-semibold text-sm">#</th>
+                <th className="p-4 text-left font-semibold text-sm">
                   Họ và Tên
                 </th>
-                <th className="p-3 sm:p-4 text-left font-semibold text-xs sm:text-sm">
-                  Email
-                </th>
-                <th className="p-3 sm:p-4 text-left font-semibold text-xs sm:text-sm">
+                <th className="p-4 text-left font-semibold text-sm">Email</th>
+                <th className="p-4 text-left font-semibold text-sm">
                   Trạng Thái
                 </th>
-                <th className="p-3 sm:p-4 text-left font-semibold text-xs sm:text-sm">
+                <th className="p-4 text-left font-semibold text-sm">
                   Hành Động
                 </th>
               </tr>
@@ -336,64 +552,152 @@ function UserManager() {
             <tbody>
               {currentUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center text-gray-500 py-6">
-                    Không có người dùng nào
+                  <td colSpan="6" className="text-center text-gray-500 py-6">
+                    {search
+                      ? "Không tìm thấy người dùng nào"
+                      : "Không có người dùng nào"}
                   </td>
                 </tr>
               ) : (
-                currentUsers.map((user, idx) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-gray-50 transition-all duration-200"
-                  >
-                    <td className="p-3 sm:p-4 border-t border-gray-200 text-xs sm:text-sm">
-                      {idx + 1 + (currentPage - 1) * usersPerPage}
-                    </td>
-                    <td className="p-3 sm:p-4 border-t border-gray-200 text-xs sm:text-sm">
-                      {user.fullname && user.fullname.trim()
-                        ? user.fullname
-                        : "N/A"}
-                    </td>
-                    <td className="p-3 sm:p-4 border-t border-gray-200 text-xs sm:text-sm break-words">
-                      {user.email || "N/A"}
-                    </td>
-                    <td className="p-3 sm:p-4 border-t border-gray-200">
-                      <span
-                        className={`inline-flex items-center px-2 py-1 text-xs sm:text-sm font-medium rounded-full ${
-                          user.status === "active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
+                currentUsers.map((user, idx) => {
+                  const isExpanded = expandedRows.has(user.id);
+                  return (
+                    <>
+                      <tr
+                        key={user.id}
+                        className="hover:bg-gray-50 transition-all duration-200 cursor-pointer"
+                        onClick={() => toggleRow(user.id)}
                       >
-                        {user.status === "active" ? "Hoạt động" : "Ngừng"}
-                      </span>
-                    </td>
-                    <td className="p-3 sm:p-4 border-t border-gray-200">
-                      <div className="flex space-x-2 sm:space-x-3">
-                        <button
-                          className="p-1.5 sm:p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-all duration-200 text-xs sm:text-sm"
-                          onClick={() => handleView(user)}
-                          title="Xem chi tiết"
+                        <td className="p-4 border-t border-gray-200 text-center">
+                          {isExpanded ? (
+                            <FaChevronUp className="text-indigo-600 mx-auto" />
+                          ) : (
+                            <FaChevronDown className="text-indigo-600 mx-auto" />
+                          )}
+                        </td>
+                        <td className="p-4 border-t border-gray-200 text-sm">
+                          {idx + 1 + (currentPage - 1) * usersPerPage}
+                        </td>
+                        <td className="p-4 border-t border-gray-200 text-sm">
+                          {user.fullname && user.fullname.trim()
+                            ? user.fullname
+                            : "N/A"}
+                        </td>
+                        <td className="p-4 border-t border-gray-200 text-sm break-words">
+                          {user.email || "N/A"}
+                        </td>
+                        <td className="p-4 border-t border-gray-200">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full ${
+                              user.status === "active"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {user.status === "active" ? "Hoạt động" : "Ngừng"}
+                          </span>
+                        </td>
+                        <td
+                          className="p-4 border-t border-gray-200"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <FaEye />
-                        </button>
-                        <button
-                          className="p-1.5 sm:p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 text-xs sm:text-sm"
-                          onClick={() => handleDelete(user.id)}
-                          title="Xóa"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          <button
+                            className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
+                            onClick={() => handleDelete(user.id)}
+                            title="Xóa"
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr key={`${user.id}-detail`}>
+                          <td colSpan="6" className="p-0 bg-gray-50">
+                            <div className="p-6 border-t border-gray-200">
+                              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                                Chi Tiết Người Dùng
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="md:col-span-2 lg:col-span-3">
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Tên Đăng Nhập:
+                                  </label>
+                                  <p className="text-sm text-gray-900 bg-white p-3 rounded-lg border border-gray-200 break-words">
+                                    {user.username}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Họ và Tên:
+                                  </label>
+                                  <p className="text-sm text-gray-900 bg-white p-3 rounded-lg border border-gray-200 break-words">
+                                    {user.fullname && user.fullname.trim()
+                                      ? user.fullname
+                                      : "N/A"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Email:
+                                  </label>
+                                  <p className="text-sm text-gray-900 bg-white p-3 rounded-lg border border-gray-200 break-all">
+                                    {user.email || "N/A"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Số Điện Thoại:
+                                  </label>
+                                  <p className="text-sm text-gray-900 bg-white p-3 rounded-lg border border-gray-200 break-words">
+                                    {user.phoneNumber || "N/A"}
+                                  </p>
+                                </div>
+                                <div className="md:col-span-2 lg:col-span-3">
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Địa Chỉ:
+                                  </label>
+                                  <p className="text-sm text-gray-900 bg-white p-3 rounded-lg border border-gray-200 break-words">
+                                    {user.address || "N/A"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Trạng Thái:
+                                  </label>
+                                  <span
+                                    className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full ${
+                                      user.status === "active"
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-gray-100 text-gray-800"
+                                    }`}
+                                  >
+                                    {user.status === "active"
+                                      ? "Hoạt động"
+                                      : "Ngừng"}
+                                  </span>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Vai Trò:
+                                  </label>
+                                  <p className="text-sm text-gray-900 bg-white p-3 rounded-lg border border-gray-200 break-words">
+                                    {user.roles?.join(", ") || "USER"}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
         {/* Pagination */}
-        {users.length > usersPerPage && (
+        {filteredUsers.length > usersPerPage && (
           <div className="flex flex-wrap justify-center items-center gap-2 py-4 px-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
@@ -433,90 +737,6 @@ function UserManager() {
           </div>
         )}
       </div>
-
-      {/* Modal xem chi tiết */}
-      {viewingUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 w-full max-w-4xl shadow-2xl backdrop-blur-lg my-4">
-            <div className="flex justify-between items-center mb-4 sm:mb-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Chi Tiết Người Dùng
-              </h3>
-              <button
-                className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
-                onClick={() => setViewingUser(null)}
-                aria-label="Đóng"
-              >
-                ×
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tên Đăng Nhập:
-                </label>
-                <p className="text-sm sm:text-base text-gray-900 bg-gray-50 p-2 rounded-lg">
-                  {viewingUser.username}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Họ và Tên:
-                </label>
-                <p className="text-sm sm:text-base text-gray-900 bg-gray-50 p-2 rounded-lg">
-                  {viewingUser.fullname || "N/A"}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email:
-                </label>
-                <p className="text-sm sm:text-base text-gray-900 bg-gray-50 p-2 rounded-lg break-words">
-                  {viewingUser.email || "N/A"}
-                </p>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Địa Chỉ:
-                </label>
-                <p className="text-sm sm:text-base text-gray-900 bg-gray-50 p-2 rounded-lg">
-                  {viewingUser.address || "N/A"}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Số Điện Thoại:
-                </label>
-                <p className="text-sm sm:text-base text-gray-900 bg-gray-50 p-2 rounded-lg">
-                  {viewingUser.phoneNumber || "N/A"}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Trạng Thái:
-                </label>
-                <span
-                  className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full ${
-                    viewingUser.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {viewingUser.status === "active" ? "Hoạt động" : "Ngừng"}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end mt-4 sm:mt-6">
-              <button
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 text-sm sm:text-base w-full sm:w-auto"
-                onClick={() => setViewingUser(null)}
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal thêm người dùng */}
       {addingUser && (
